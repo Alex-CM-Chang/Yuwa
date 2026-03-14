@@ -1,559 +1,366 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🌸 日文五十音特訓班 (完美日系留白版)</title>
-  <style>
-    /* =========================================
-       🎨 UI/UX 設計：全局樣式
-       ========================================= */
-    :root {
-      --washi-white: #FBFBF6;  
-      --sakura-pink: #FFD1DC;  
-      --sakura-dark: #E87A90;  
-      --text-main: #4A4A4A;    
-      --text-light: #9B9B9B;   
-      --card-bg: #FFFFFF;
-      --correct-green: #4CAF50;
-      --wrong-red: #F44336;      
-    }
-
-    * { box-sizing: border-box; }
-
-    body {
-      font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
-      background-color: var(--washi-white);
-      color: var(--text-main);
-      margin: 0; padding: 0;
-      display: flex; flex-direction: column; align-items: center;
-      min-height: 100vh;
-    }
-
-    header {
-      width: 100%; text-align: center; padding: 25px 20px 15px;
-      background: linear-gradient(180deg, #fff 0%, var(--washi-white) 100%);
-      box-shadow: 0 4px 15px rgba(232, 122, 144, 0.1);
-    }
-    header h1 { color: var(--sakura-dark); margin: 0 0 10px 0; font-size: 30px; }
-    header p { color: var(--text-light); margin: 0; font-size: 14px;}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>友和達創 | 雲端與 Ai 演化顧問 - 引領企業數位轉型</title>
+    <meta name="description" content="友和達創提供高階雲端架構現代化與企業級 AI 演化諮詢，以人為本，助企業建立永續科技生態。">
     
-    /* 模式切換按鈕 */
-    .mode-switch { margin-bottom: 15px; }
-    .btn-mode {
-      padding: 10px 30px; font-size: 18px; font-weight: bold; border: none;
-      background: #eee; color: var(--text-light); cursor: pointer;
-      border-radius: 8px 8px 0 0; transition: 0.3s;
-    }
-    .btn-mode.active { background: var(--sakura-dark); color: #fff; }
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;600;700&family=Noto+Sans+TC:wght@100;400;700&display=swap" rel="stylesheet">
 
-    /* 次分類切換按鈕 */
-    .controls { margin: 10px 0; display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; }
-    .btn {
-      padding: 12px 24px; font-size: 16px; font-weight: bold;
-      border: 2px solid var(--sakura-dark); border-radius: 30px;
-      background: transparent; color: var(--sakura-dark); cursor: pointer; transition: 0.3s;
-    }
-    .btn.active { background: var(--sakura-dark); color: #fff; box-shadow: 0 4px 10px rgba(232, 122, 144, 0.3); }
-    .btn:hover:not(.active) { background: var(--sakura-pink); color: var(--text-main); border-color: var(--sakura-pink); }
-    
-    .controls.sub-tabs { gap: 10px; margin-top: 5px;}
-    .btn-sub {
-      padding: 8px 18px; font-size: 14px; font-weight: bold;
-      border: 2px solid #F19CAE; border-radius: 20px;
-      background: var(--card-bg); color: #F19CAE; cursor: pointer; transition: 0.2s;
-    }
-    .btn-sub.active { background: #F19CAE; color: #fff; }
-    .btn-sub:hover:not(.active) { background: #FDF0F3; }
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Space Grotesk', 'Noto Sans TC', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            dark: '#020617',
+                            primary: '#2DD4BF', // 電子薄荷
+                            secondary: '#6366F1', // 靛藍
+                            accent: '#F43F5E',
+                            glass: 'rgba(15, 23, 42, 0.8)'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
 
-    /* =========================================
-       📖 學習區網格 (極致日系留白，絕對置中)
-       ========================================= */
-    .kana-grid {
-      display: grid; 
-      grid-template-columns: repeat(5, 1fr); 
-      gap: 16px; 
-      max-width: 800px; 
-      width: 92%; 
-      margin: 30px auto 40px;
-    }
-    
-    .kana-card {
-      background: var(--card-bg); 
-      border-radius: 16px; 
-      aspect-ratio: 1 / 1.15; 
-      display: flex;
-      flex-direction: column;
-      justify-content: center; 
-      align-items: center;     
-      padding: 5px;            
-      box-shadow: 0 4px 10px rgba(0,0,0,0.03); 
-      cursor: pointer; user-select: none;
-      transition: transform 0.2s, box-shadow 0.2s, border-bottom 0.2s; 
-      border: 2px solid transparent;
-      overflow: hidden;        
-    }
-    
-    .kana-card:hover { 
-      transform: translateY(-5px); 
-      box-shadow: 0 8px 20px rgba(232, 122, 144, 0.15); 
-      border-bottom: 4px solid var(--sakura-dark); 
-    }
-    
-    .kana-card.empty { background: transparent; box-shadow: none; cursor: default; pointer-events: none; }
-    
-    .kana-char { 
-      font-size: 38px; 
-      font-weight: bold; 
-      color: var(--text-main); 
-      margin: 0 0 10px 0; 
-      padding: 0;
-      line-height: 1;
-      width: 100%;        
-      text-align: center; 
-      white-space: nowrap;
-    }
-    
-    .kana-char.yoon-text { font-size: 26px; }
+    <style>
+        :root { --cursor-color: 45, 212, 191; }
+        body { background: #020617; color: #f8fafc; overflow-x: hidden; }
+        
+        /* 智慧游標：預設隱藏，僅在非觸控裝置顯示 */
+        #custom-cursor {
+            position: fixed; width: 20px; height: 20px; background: rgba(var(--cursor-color), 0.5);
+            border-radius: 50%; pointer-events: none; z-index: 9999;
+            backdrop-filter: blur(4px); display: none;
+        }
+        @media (pointer: fine) { #custom-cursor { display: block; } body { cursor: none; } }
 
-    .kana-romaji { 
-      font-size: 14px; 
-      color: var(--text-light); 
-      margin: 0;
-      padding: 0;
-      line-height: 1;
-      width: 100%;
-      text-align: center;
-    }
+        .text-gradient {
+            background: linear-gradient(135deg, #fff 30%, #2DD4BF 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
 
-    /* 易混淆字元特訓區 */
-    .confusing-section {
-      width: 90%; max-width: 800px; margin: 0 auto 40px;
-      background: #fff; padding: 30px; border-radius: 20px;
-      box-shadow: 0 5px 20px rgba(0,0,0,0.05); border-top: 5px solid var(--sakura-pink);
-    }
-    .confusing-section h2 { color: var(--sakura-dark); text-align: center; margin-top: 0; font-size: 22px; }
-    .confuse-pair { display: flex; align-items: center; padding: 15px; border-bottom: 1px dashed #eee; gap: 20px; }
-    .confuse-pair:last-child { border-bottom: none; }
-    .pair-chars { font-size: 32px; font-weight: bold; color: var(--text-main); width: 120px; text-align: center; flex-shrink: 0; }
-    .pair-desc { font-size: 16px; line-height: 1.6; color: var(--text-main); }
-    .mnemonic { background: var(--washi-white); padding: 5px 10px; border-radius: 5px; color: var(--sakura-dark); font-weight: bold; font-size: 15px; display: inline-block; margin-top: 5px;}
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
 
-    /* =========================================
-       🔥 測驗區專屬樣式
-       ========================================= */
-    #quiz-section { width: 90%; max-width: 600px; margin: 30px auto; text-align: center; display: none; flex-direction: column; align-items: center; }
-    .stats-board { background: #FFF3E0; padding: 10px 20px; border-radius: 20px; color: #E65100; font-weight: bold; font-size: 14px; margin-bottom: 15px; box-shadow: 0 4px 10px rgba(230, 81, 0, 0.1); width: 100%; }
-    .session-stats { background: #fff; border: 2px solid var(--sakura-pink); border-radius: 16px; padding: 15px 20px; font-size: 16px; font-weight: bold; color: var(--text-main); margin-bottom: 25px; width: 100%; display: flex; justify-content: space-around; box-shadow: 0 4px 10px rgba(0,0,0,0.05); align-items: center; }
-    .stat-num { font-size: 22px; margin-left: 5px; }
-    .correct-text { color: var(--correct-green); }
-    .wrong-text { color: var(--wrong-red); }
-    .quiz-question { font-size: 80px; font-weight: bold; color: var(--sakura-dark); margin: 15px 0 25px 0; letter-spacing: 5px; text-transform: lowercase; }
-    .quiz-options { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 100%; }
-    .quiz-btn { background: var(--card-bg); border: 2px solid #ddd; border-radius: 16px; padding: 30px; font-size: 40px; font-weight: bold; color: var(--text-main); cursor: pointer; transition: 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.05); display: flex; justify-content: center; align-items: center; }
-    .quiz-btn:hover { background: #f9f9f9; border-color: var(--sakura-pink); transform: scale(1.02); }
-    .quiz-btn.correct { background: var(--correct-green); color: white; border-color: var(--correct-green); }
-    .quiz-btn.wrong { background: var(--wrong-red); color: white; border-color: var(--wrong-red); }
+        #canvas-container { position: absolute; top: 0; left: 0; width: 100%; height: 100vh; z-index: 1; pointer-events: none; }
 
-    /* Modal 及畫布樣式 */
-    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.9); justify-content: center; align-items: center; z-index: 1000; }
-    .modal.show { display: flex; }
-    .modal-content { background: var(--card-bg); padding: 30px; border-radius: 24px; text-align: center; position: relative; width: 90%; max-width: 350px; border: 2px solid var(--sakura-pink); box-shadow: 0 15px 35px rgba(0,0,0,0.1); }
-    .close-btn { position: absolute; top: 15px; right: 20px; font-size: 30px; cursor: pointer; color: var(--text-light); }
-    .canvas-wrapper { position: relative; width: 250px; height: 250px; margin: 20px auto; border: 2px dashed var(--sakura-pink); border-radius: 12px; overflow: hidden; background-image: linear-gradient(90deg, transparent 49.5%, #f0f0f0 49.5%, #f0f0f0 50.5%, transparent 50.5%), linear-gradient(0deg, transparent 49.5%, #f0f0f0 49.5%, #f0f0f0 50.5%, transparent 50.5%); }
-    #trace-char { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #F5F5F5; pointer-events: none; }
-    #stroke-animation-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; display: flex; justify-content: center; align-items: center;}
-    #stroke-animation-container path { fill: none; stroke: var(--sakura-dark); stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
-    @keyframes drawPath { to { stroke-dashoffset: 0; } }
-    canvas { position: absolute; top: 0; left: 0; cursor: crosshair; z-index: 10; }
-    .action-btn { padding: 12px; font-size: 16px; border: none; border-radius: 8px; background: var(--washi-white); color: var(--text-main); cursor: pointer; font-weight: bold; width: 100%; margin-bottom: 10px; display: block; text-decoration: none;}
-    .action-btn.primary { background: var(--sakura-dark); color: #fff; }
-    .action-btn:hover { background: #EAEAEA; }
-    .action-btn.primary:hover { background: #D66B80; }
-    
-    /* 底部彩蛋區塊 */
-    footer { margin: 0 0 40px; text-align: center; color: var(--text-light); width: 100%; }
-    .easter-egg { display: inline-block; margin-top: 10px; padding: 10px 20px; background: #FFF3E0; color: #E65100; border-radius: 20px; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.05); font-size: 14px; max-width: 90%; }
+        #progress-bar {
+            position: fixed; top: 0; left: 0; width: 0%; height: 3px;
+            background: linear-gradient(90deg, #2DD4BF, #6366F1); z-index: 1000;
+        }
 
-    /* 手機版：維持小字體，確保大量留白且絕對置中 */
-    @media (max-width: 500px) {
-      .kana-grid { gap: 10px; width: 95%; margin-top: 20px; }
-      .kana-card { border-radius: 12px; }
-      .kana-char { font-size: 26px; margin-bottom: 6px; }
-      .kana-char.yoon-text { font-size: 18px; } 
-      .kana-romaji { font-size: 12px; }
-      .confuse-pair { flex-direction: column; text-align: center; gap: 10px; }
-      .pair-chars { width: auto; }
-    }
-  </style>
+        .btn-click-effect:active { transform: scale(0.95); transition: transform 0.1s; }
+        
+        /* 隱藏捲軸但保留功能 */
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: #020617; }
+        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 10px; }
+    </style>
 </head>
 <body>
+    <div id="custom-cursor"></div>
+    <div id="progress-bar"></div>
 
-  <header>
-    <h1>🌸 日文五十音特訓班</h1>
-    
-    <div class="mode-switch">
-      <button id="mode-learn" class="btn-mode active" onclick="switchMode('learn')">📖 學習區</button>
-      <button id="mode-quiz" class="btn-mode" onclick="switchMode('quiz')">🔥 測驗區</button>
+    <!-- 導覽列 -->
+    <nav class="fixed top-0 w-full z-[100] px-6 md:px-10 py-6 mix-blend-difference">
+        <div class="max-w-[1400px] mx-auto flex justify-between items-center">
+            <div class="text-xl md:text-2xl font-bold tracking-tighter flex items-center gap-2">
+                <span class="w-6 h-6 md:w-8 md:h-8 bg-brand-primary rounded-full"></span>
+                <span class="text-white">友和達創 CONSULTING</span>
+            </div>
+            
+            <!-- 手機版選單按鈕 -->
+            <button id="menu-toggle" class="md:hidden text-white text-3xl">
+                <iconify-icon icon="heroicons:bars-3-bottom-right"></iconify-icon>
+            </button>
+
+            <!-- 桌面版選單 -->
+            <div class="hidden md:flex gap-12 items-center">
+                <a href="#solutions" class="text-sm font-medium hover:text-brand-primary transition-all">SOLUTION</a>
+                <a href="#approach" class="text-sm font-medium hover:text-brand-primary transition-all">APPROACH</a>
+                <button class="btn-click-effect px-8 py-3 rounded-full border border-white/20 hover:bg-white hover:text-black transition-all duration-500">
+                    GET STARTED
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 手機版全螢幕選單 -->
+    <div id="mobile-menu" class="fixed inset-0 bg-brand-dark z-[90] flex flex-col justify-center items-center gap-8 text-2xl font-bold translate-x-full transition-transform duration-500 md:hidden">
+        <a href="#solutions" class="mobile-link">SOLUTION</a>
+        <a href="#approach" class="mobile-link">APPROACH</a>
+        <button class="px-10 py-4 bg-brand-primary text-brand-dark rounded-full text-lg">GET STARTED</button>
     </div>
 
-    <div id="filter-controls">
-      <div class="controls">
-        <button id="btn-hiragana" class="btn active" onclick="setMainTab('hiragana')">平假名</button>
-        <button id="btn-katakana" class="btn" onclick="setMainTab('katakana')">片假名</button>
-      </div>
-      <div class="controls sub-tabs">
-        <button id="btn-seion" class="btn-sub active" onclick="setSubTab('seion')">清音</button>
-        <button id="btn-dakuon" class="btn-sub" onclick="setSubTab('dakuon')">濁音/半濁音</button>
-        <button id="btn-yoon" class="btn-sub" onclick="setSubTab('yoon')">拗音</button>
-      </div>
-    </div>
-  </header>
-
-  <main id="learn-section">
-    <div class="kana-grid" id="kana-grid"></div>
-    <section class="confusing-section">
-      <h2>🧐 老師的特訓：易混淆字元辨識</h2>
-      <div id="confusing-content"></div>
+    <!-- Hero Section -->
+    <section class="relative h-screen flex items-center justify-center overflow-hidden">
+        <div id="canvas-container"></div>
+        <div class="relative z-10 text-center px-6">
+            <h2 class="text-brand-primary font-bold tracking-[0.3em] mb-4 md:mb-6 overflow-hidden">
+                <span class="inline-block translate-y-full hero-sub text-xs md:text-base">REDEFINING INTELLIGENCE</span>
+            </h2>
+            <h1 class="text-5xl md:text-9xl font-bold leading-tight mb-8 md:mb-10">
+                <span class="block overflow-hidden"><span class="inline-block translate-y-full hero-title">雲端思維</span></span>
+                <span class="block overflow-hidden"><span class="inline-block translate-y-full hero-title text-gradient italic">Ai 演化</span></span>
+            </h1>
+            <p class="max-w-xl mx-auto text-gray-400 text-base md:text-xl mb-10 md:mb-12 opacity-0 hero-desc">
+                不只是諮詢，我們是您企業數位生命的引導者。結合以人為本的核心價值，讓數據擁有溫度，讓轉型成為直覺。
+            </p>
+            <div class="opacity-0 hero-cta">
+                <button class="btn-click-effect group relative px-10 py-4 md:px-12 md:py-5 bg-brand-primary text-brand-dark font-black rounded-full overflow-hidden transition-transform">
+                    <span class="relative z-10">預約首席顧問談話</span>
+                    <div class="absolute inset-0 bg-white translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+                </button>
+            </div>
+        </div>
+        <div class="absolute bottom-10 left-1/2 -translate-x-1/2 z-10 opacity-50 animate-bounce hidden md:block">
+            <iconify-icon icon="ph:mouse-light" class="text-3xl"></iconify-icon>
+        </div>
     </section>
-  </main>
 
-  <section id="quiz-section">
-    <div class="stats-board" id="stats-board">目前還沒有錯題記錄，放馬過來吧！</div>
-    
-    <div class="session-stats">
-      <div>✅ 答對<br><span id="session-correct" class="stat-num correct-text">0</span></div>
-      <div style="width: 2px; background: #eee; height: 30px;"></div>
-      <div>❌ 答錯<br><span id="session-wrong" class="stat-num wrong-text">0</span></div>
-      <div style="width: 2px; background: #eee; height: 30px;"></div>
-      <div>🎯 正確率<br><span id="session-accuracy" class="stat-num" style="color: var(--sakura-dark);">0%</span></div>
-    </div>
+    <!-- About Section -->
+    <section id="approach" class="py-20 md:py-32 px-6 md:px-10 relative z-10">
+        <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-16 md:gap-20 items-center">
+            <div class="relative">
+                <div class="absolute -top-10 md:-top-20 -left-10 md:-left-20 text-[6rem] md:text-[15rem] font-bold text-white/5 leading-none select-none">HUMAN</div>
+                <h3 class="text-4xl md:text-5xl font-bold mb-8">
+                    我們相信，<br><span class="text-brand-primary underline decoration-brand-secondary underline-offset-8">最好的 AI 是隱形的。</span>
+                </h3>
+                <p class="text-gray-400 text-lg md:text-xl leading-relaxed mb-10">
+                    「以人為本」不是口號，而是我們的演算法準則。我們協助企業建立友善多元的數位環境，確保每一行程式碼都與社會福祉產生正向共鳴。
+                </p>
+                <div class="flex gap-8 md:gap-10">
+                    <div>
+                        <div class="text-3xl md:text-4xl font-bold text-brand-primary mb-2">98%</div>
+                        <div class="text-xs text-gray-500 uppercase tracking-widest">客戶滿意度</div>
+                    </div>
+                    <div>
+                        <div class="text-3xl md:text-4xl font-bold text-brand-secondary mb-2">150+</div>
+                        <div class="text-xs text-gray-500 uppercase tracking-widest">成功轉型案例</div>
+                    </div>
+                </div>
+            </div>
+            <div class="relative group">
+                <div class="absolute inset-0 bg-brand-primary/20 rounded-3xl translate-x-4 translate-y-4 -z-10 transition-transform group-hover:translate-x-6 group-hover:translate-y-6"></div>
+                <img src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=1000" 
+                     alt="Professional Tech" 
+                     class="rounded-3xl shadow-2xl grayscale hover:grayscale-0 transition-all duration-700 w-full object-cover aspect-video md:aspect-auto" loading="lazy">
+                <div class="absolute bottom-6 -left-4 md:-left-8 glass-panel p-4 md:p-6 rounded-2xl max-w-[250px] md:max-w-xs hidden md:block">
+                    <iconify-icon icon="ph:quotes-fill" class="text-brand-primary text-2xl mb-2"></iconify-icon>
+                    <p class="text-sm italic">"這不僅僅是技術升級，更是一場關於企業文化與科技共生的深度對話。"</p>
+                </div>
+            </div>
+        </div>
+    </section>
 
-    <div style="color: var(--text-light); font-weight: bold; margin-top: 5px;">請選出對應的假名：</div>
-    <div class="quiz-question" id="quiz-question">ka</div>
-    <div class="quiz-options" id="quiz-options"></div>
-  </section>
+    <!-- Services Section -->
+    <section id="solutions" class="py-20 md:py-32 bg-white/5">
+        <div class="max-w-[1400px] mx-auto px-6 md:px-10">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 md:mb-20 gap-6">
+                <h2 class="text-5xl md:text-6xl font-bold italic">CONSULTING<br>SYSTEMS.</h2>
+                <p class="text-gray-500 max-w-xs md:text-right">透過三個維度的深度掃描，為您的企業找尋演化捷徑。</p>
+            </div>
+            
+            <div class="grid md:grid-cols-12 gap-6">
+                <div class="md:col-span-8 glass-panel p-8 md:p-12 rounded-[2rem] md:rounded-[3rem] group overflow-hidden relative">
+                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=1000" 
+                         class="absolute inset-0 w-full h-full object-cover opacity-10 group-hover:scale-110 transition-transform duration-1000" alt="Cloud">
+                    <iconify-icon icon="ph:cloud-arrow-up-light" class="text-5xl md:text-6xl text-brand-primary mb-8 md:mb-10"></iconify-icon>
+                    <h4 class="text-2xl md:text-3xl font-bold mb-4">雲端架構現代化</h4>
+                    <p class="text-gray-400 max-w-md">打破孤島式數據，建立具備高度彈性與災難復原能力的全球化雲端原生環境。</p>
+                </div>
+                <div class="md:col-span-4 bg-brand-secondary p-8 md:p-12 rounded-[2rem] md:rounded-[3rem] flex flex-col justify-between text-white">
+                    <iconify-icon icon="ph:brain-light" class="text-5xl md:text-6xl mb-8 md:mb-10"></iconify-icon>
+                    <div>
+                        <h4 class="text-2xl md:text-3xl font-bold mb-4">企業級 Ai 生成</h4>
+                        <p class="text-white/80">將大型語言模型整合至工作流，釋放員工潛力，實現真正的自動化決策。</p>
+                    </div>
+                </div>
+                <div class="md:col-span-4 glass-panel p-8 md:p-12 rounded-[2rem] md:rounded-[3rem]">
+                    <iconify-icon icon="ph:users-three-light" class="text-5xl md:text-6xl text-brand-accent mb-8 md:mb-10"></iconify-icon>
+                    <h4 class="text-2xl md:text-3xl font-bold mb-4">文化轉型顧問</h4>
+                    <p class="text-gray-400">技術只是工具，思維才是關鍵。我們協助管理層與員工建立數位共識。</p>
+                </div>
+                <div class="md:col-span-8 relative rounded-[2rem] md:rounded-[3rem] overflow-hidden group min-h-[300px]">
+                    <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&q=80&w=1000" 
+                         class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" alt="Meeting" loading="lazy">
+                    <div class="absolute inset-0 bg-gradient-to-t from-brand-dark to-transparent opacity-80"></div>
+                    <div class="absolute bottom-6 md:bottom-10 left-6 md:left-10">
+                        <span class="px-4 py-2 bg-brand-primary text-black text-xs font-bold rounded-full mb-4 inline-block tracking-tighter uppercase">Next Level</span>
+                        <h4 class="text-3xl md:text-4xl font-bold">與社會共榮的永續科技</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-  <footer>
-    <p>每天進步一點點，日文一點都不難！</p>
-    <div class="easter-egg" id="kansai-egg"></div>
-  </footer>
+    <!-- Footer CTA -->
+    <section class="py-24 md:py-40 text-center px-6">
+        <h2 class="text-5xl md:text-8xl font-bold mb-10 md:mb-12 tracking-tighter">準備好與<br><span class="text-brand-primary italic">未來共生</span>嗎？</h2>
+        <div class="flex flex-col md:flex-row gap-6 justify-center items-center">
+            <button class="btn-click-effect w-full md:w-auto px-12 py-6 bg-white text-black rounded-full font-bold text-xl hover:bg-brand-primary transition-all duration-300">
+                預約首會診斷
+            </button>
+            <a href="#" class="text-xl border-b-2 border-white/20 pb-2 hover:border-brand-primary transition-all">
+                下載轉型指南 (PDF)
+            </a>
+        </div>
+    </section>
 
-  <div id="kana-modal" class="modal">
-    <div class="modal-content">
-      <span class="close-btn" onclick="closeModal()">&times;</span>
-      <h3 id="modal-kana-title" style="margin: 0; font-size: 24px;">あ</h3>
-      <div id="modal-romaji" style="color: var(--sakura-dark); margin-bottom: 15px;">【 a 】</div>
-      <div class="canvas-wrapper">
-        <div id="trace-char">あ</div>
-        <div id="stroke-animation-container"></div>
-        <canvas id="drawing-canvas" width="250" height="250"></canvas>
-      </div>
-      <div>
-        <button class="action-btn primary" onclick="speakCurrentKana()">🔊 聽正確發音</button>
-        <button class="action-btn" onclick="playStrokeAnimation()">▶️ 播放筆順動畫</button>
-        <button class="action-btn" onclick="clearCanvas()">🧹 清除手寫字跡</button>
-      </div>
-    </div>
-  </div>
+    <footer class="py-10 border-t border-white/5 px-6 md:px-10">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center text-gray-500 text-xs tracking-widest gap-4">
+            <p>© 2024 友和達創. 致力於數位生命的持續演進.</p>
+            <div class="flex gap-8">
+                <a href="#" class="hover:text-white transition-colors">LINKEDIN</a>
+                <a href="#" class="hover:text-white transition-colors">TWITTER</a>
+                <a href="#" class="hover:text-white transition-colors">PRIVACY</a>
+            </div>
+        </div>
+    </footer>
 
-  <script>
-    /* =========================================
-       📚 1. 核心資料庫與彩蛋題庫
-       ========================================= */
-    const database = {
-      hiragana: {
-        seion: [ { k: 'あ', r: 'a' }, { k: 'い', r: 'i' }, { k: 'う', r: 'u' }, { k: 'え', r: 'e' }, { k: 'お', r: 'o' }, { k: 'か', r: 'ka' }, { k: 'き', r: 'ki' }, { k: 'く', r: 'ku' }, { k: 'け', r: 'ke' }, { k: 'こ', r: 'ko' }, { k: 'さ', r: 'sa' }, { k: 'し', r: 'shi' }, { k: 'す', r: 'su' }, { k: 'せ', r: 'se' }, { k: 'そ', r: 'so' }, { k: 'た', r: 'ta' }, { k: 'ち', r: 'chi' }, { k: 'つ', r: 'tsu' }, { k: 'て', r: 'te' }, { k: 'と', r: 'to' }, { k: 'な', r: 'na' }, { k: 'に', r: 'ni' }, { k: 'ぬ', r: 'nu' }, { k: 'ね', r: 'ne' }, { k: 'の', r: 'no' }, { k: 'は', r: 'ha' }, { k: 'ひ', r: 'hi' }, { k: 'ふ', r: 'fu' }, { k: 'へ', r: 'he' }, { k: 'ほ', r: 'ho' }, { k: 'ま', r: 'ma' }, { k: 'み', r: 'mi' }, { k: 'む', r: 'mu' }, { k: 'め', r: 'me' }, { k: 'も', r: 'mo' }, { k: 'や', r: 'ya' }, null, { k: 'ゆ', r: 'yu' }, null, { k: 'よ', r: 'yo' }, { k: 'ら', r: 'ra' }, { k: 'り', r: 'ri' }, { k: 'る', r: 'ru' }, { k: 'れ', r: 're' }, { k: 'ろ', r: 'ro' }, { k: 'わ', r: 'wa' }, null, null, null, { k: 'を', r: 'wo' }, { k: 'ん', r: 'n' }, null, null, null, null ],
-        dakuon: [ { k: 'が', r: 'ga' }, { k: 'ぎ', r: 'gi' }, { k: 'ぐ', r: 'gu' }, { k: 'げ', r: 'ge' }, { k: 'ご', r: 'go' }, { k: 'ざ', r: 'za' }, { k: 'じ', r: 'ji' }, { k: 'ず', r: 'zu' }, { k: 'ぜ', r: 'ze' }, { k: 'ぞ', r: 'zo' }, { k: 'だ', r: 'da' }, { k: 'ぢ', r: 'ji' }, { k: 'づ', r: 'zu' }, { k: 'で', r: 'de' }, { k: 'ど', r: 'do' }, { k: 'ば', r: 'ba' }, { k: 'び', r: 'bi' }, { k: 'ぶ', r: 'bu' }, { k: 'べ', r: 'be' }, { k: 'ぼ', r: 'bo' }, { k: 'ぱ', r: 'pa' }, { k: 'ぴ', r: 'pi' }, { k: 'ぷ', r: 'pu' }, { k: 'ぺ', r: 'pe' }, { k: 'ぽ', r: 'po' } ],
-        yoon: [ { k: 'きゃ', r: 'kya' }, null, { k: 'きゅ', r: 'kyu' }, null, { k: 'きょ', r: 'kyo' }, { k: 'しゃ', r: 'sha' }, null, { k: 'しゅ', r: 'shu' }, null, { k: 'しょ', r: 'sho' }, { k: 'ちゃ', r: 'cha' }, null, { k: 'ちゅ', r: 'chu' }, null, { k: 'ちょ', r: 'cho' }, { k: 'にゃ', r: 'nya' }, null, { k: 'にゅ', r: 'nyu' }, null, { k: 'にょ', r: 'nyo' }, { k: 'ひゃ', r: 'hya' }, null, { k: 'ひゅ', r: 'hyu' }, null, { k: 'ひょ', r: 'hyo' }, { k: 'みゃ', r: 'mya' }, null, { k: 'みゅ', r: 'myu' }, null, { k: 'みょ', r: 'myo' }, { k: 'りゃ', r: 'rya' }, null, { k: 'りゅ', r: 'ryu' }, null, { k: 'りょ', r: 'ryo' }, { k: 'ぎゃ', r: 'gya' }, null, { k: 'ぎゅ', r: 'gyu' }, null, { k: 'ぎょ', r: 'gyo' }, { k: 'じゃ', r: 'ja' }, null, { k: 'ジュ', r: 'ju' }, null, { k: 'ジョ', r: 'jo' }, { k: 'ビャ', r: 'bya' }, null, { k: 'ビュ', r: 'byu' }, null, { k: 'ビョ', r: 'byo' }, { k: 'ピャ', r: 'pya' }, null, { k: 'ピュ', r: 'pyu' }, null, { k: 'ピョ', r: 'pyo' } ]
-      },
-      katakana: {
-        seion: [ { k: 'ア', r: 'a' }, { k: 'イ', r: 'i' }, { k: 'ウ', r: 'u' }, { k: 'エ', r: 'e' }, { k: 'オ', r: 'o' }, { k: 'カ', r: 'ka' }, { k: 'キ', r: 'ki' }, { k: 'ク', r: 'ku' }, { k: 'ケ', r: 'ke' }, { k: 'コ', r: 'ko' }, { k: 'サ', r: 'sa' }, { k: 'シ', r: 'shi' }, { k: 'ス', r: 'su' }, { k: 'セ', r: 'se' }, { k: 'ソ', r: 'so' }, { k: 'タ', r: 'ta' }, { k: 'チ', r: 'chi' }, { k: 'ツ', r: 'tsu' }, { k: 'テ', r: 'te' }, { k: 'ト', r: 'to' }, { k: 'ナ', r: 'na' }, { k: 'ニ', r: 'ni' }, { k: 'ヌ', r: 'nu' }, { k: 'ネ', r: 'ne' }, { k: 'ノ', r: 'no' }, { k: 'ハ', r: 'ha' }, { k: 'ヒ', r: 'hi' }, { k: 'フ', r: 'fu' }, { k: 'ヘ', r: 'he' }, { k: 'ホ', r: 'ho' }, { k: 'マ', r: 'ma' }, { k: 'ミ', r: 'mi' }, { k: 'ム', r: 'mu' }, { k: 'メ', r: 'me' }, { k: 'モ', r: 'mo' }, { k: 'ヤ', r: 'ya' }, null, { k: 'ユ', r: 'yu' }, null, { k: 'ヨ', r: 'yo' }, { k: 'ラ', r: 'ra' }, { k: 'リ', r: 'ri' }, { k: 'ル', r: 'ru' }, { k: 'レ', r: 're' }, { k: 'ロ', r: 'ro' }, { k: 'ワ', r: 'wa' }, null, null, null, { k: 'ヲ', r: 'wo' }, { k: 'ン', r: 'n' }, null, null, null, null ],
-        dakuon: [ { k: 'ガ', r: 'ga' }, { k: 'ギ', r: 'gi' }, { k: 'グ', r: 'gu' }, { k: 'ゲ', r: 'ge' }, { k: 'ゴ', r: 'go' }, { k: 'ザ', r: 'za' }, { k: 'ジ', r: 'ji' }, { k: 'ズ', r: 'zu' }, { k: 'ゼ', r: 'ze' }, { k: 'ゾ', r: 'zo' }, { k: 'ダ', r: 'da' }, { k: 'ヂ', r: 'ji' }, { k: 'ヅ', r: 'zu' }, { k: 'デ', r: 'de' }, { k: 'ド', r: 'do' }, { k: 'バ', r: 'ba' }, { k: 'ビ', r: 'bi' }, { k: 'ブ', r: 'bu' }, { k: 'ベ', r: 'be' }, { k: 'ボ', r: 'bo' }, { k: 'パ', r: 'pa' }, { k: 'ピ', r: 'pi' }, { k: 'プ', r: 'pu' }, { k: 'ペ', r: 'pe' }, { k: 'ポ', r: 'po' } ],
-        yoon: [ { k: 'キャ', r: 'kya' }, null, { k: 'キュ', r: 'kyu' }, null, { k: 'キョ', r: 'kyo' }, { k: 'シャ', r: 'sha' }, null, { k: 'シュ', r: 'shu' }, null, { k: 'ショ', r: 'sho' }, { k: 'チャ', r: 'cha' }, null, { k: 'チュ', r: 'chu' }, null, { k: 'チョ', r: 'cho' }, { k: 'ニャ', r: 'nya' }, null, { k: 'ニュ', r: 'nyu' }, null, { k: 'ニョ', r: 'nyo' }, { k: 'ヒャ', r: 'hya' }, null, { k: 'ヒュ', r: 'hyu' }, null, { k: 'ヒョ', r: 'hyo' }, { k: 'ミャ', r: 'mya' }, null, { k: 'ミュ', r: 'myu' }, null, { k: 'ミョ', r: 'myo' }, { k: 'リャ', r: 'rya' }, null, { k: 'リュ', r: 'ryu' }, null, { k: 'リョ', r: 'ryo' }, { k: 'ギャ', r: 'gya' }, null, { k: 'ギュ', r: 'gyu' }, null, { k: 'ギョ', r: 'gyo' }, { k: 'ジャ', r: 'ja' }, null, { k: 'ジュ', r: 'ju' }, null, { k: 'ジョ', r: 'jo' }, { k: 'ビャ', r: 'bya' }, null, { k: 'ビュ', r: 'byu' }, null, { k: 'ビョ', r: 'byo' }, { k: 'ピャ', r: 'pya' }, null, { k: 'ピュ', r: 'pyu' }, null, { k: 'ピョ', r: 'pyo' } ]
-      }
-    };
-
-    const confusingData = [
-      { pair: 'さ / き', desc: '平假名的「sa」跟「ki」長得很像！', mnemonic: 'さ 的肚子比較大，上面只有一條橫線；き 有兩條橫線！' },
-      { pair: 'あ / お', desc: '平假名的「a」跟「o」也是新手陷阱。', mnemonic: 'あ 裡面有一個十字交叉；お 的右邊多了一點，而且一筆畫到底！' },
-      { pair: 'ぬ / め', desc: '平假名的「nu」跟「me」就像雙胞胎。', mnemonic: 'ぬ 的尾巴有打結（像豬尾巴）；め 的尾巴是順順的收掉。' },
-      { pair: 'シ / ツ', desc: '片假名大魔王：「shi」跟「tsu」。', mnemonic: 'シ (shi) 是由下往上提（兩點平平的）；ツ (tsu) 是由上往下撇（兩點直直的）。' },
-      { pair: 'ソ / ン', desc: '片假名二號魔王：「so」跟「n」。', mnemonic: 'ソ (so) 從右上往下撇；ン (n) 從左下往上提（像打勾一樣）。' }
-    ];
-
-    const kansaiPhrases = [
-      "💡 關西腔小教學：おおきに！ (謝謝！)",
-      "💡 關西腔小教學：なんでやねん！ (搞什麼啊 / 吐槽用！)",
-      "💡 關西腔小教學：ぼちぼちでんな (還過得去啦)",
-      "💡 關西腔小教學：何して！くれんねん！ (你在搞什麼鬼啊！)"
-    ];
-
-    let currentMain = 'hiragana';
-    let currentSub = 'seion';
-    let currentMode = 'learn'; 
-    let currentKana = '';
-
-    /* =========================================
-       🧠 2. AI 智慧測驗紀錄 & 本次統計
-       ========================================= */
-    let userStats = JSON.parse(localStorage.getItem('kanaStats')) || {};
-    let sessionCorrect = 0;
-    let sessionWrong = 0;
-
-    function saveStats() {
-      localStorage.setItem('kanaStats', JSON.stringify(userStats));
-      updateStatsBoard();
-    }
-
-    function updateSessionStats() {
-      document.getElementById('session-correct').innerText = sessionCorrect;
-      document.getElementById('session-wrong').innerText = sessionWrong;
-      const total = sessionCorrect + sessionWrong;
-      const accuracy = total === 0 ? 0 : Math.round((sessionCorrect / total) * 100);
-      document.getElementById('session-accuracy').innerText = accuracy + '%';
-    }
-
-    function getCurrentPool() { return database[currentMain][currentSub].filter(item => item !== null); }
-
-    function getWeightedRandomKana(pool) {
-      let weightedPool = [];
-      pool.forEach(item => {
-        let weight = 1; 
-        if (userStats[item.k]) { weight = Math.max(1, 1 + (userStats[item.k].wrong * 3) - userStats[item.k].correct); }
-        for(let i=0; i<weight; i++) { weightedPool.push(item); }
-      });
-      return weightedPool[Math.floor(Math.random() * weightedPool.length)];
-    }
-
-    function updateStatsBoard() {
-      const board = document.getElementById('stats-board');
-      const errors = Object.entries(userStats).filter(([k, v]) => v.wrong > 0).sort((a, b) => b[1].wrong - a[1].wrong).slice(0, 3);
-      if (errors.length === 0) { board.innerText = "😎 目前完美零失誤！繼續保持！"; } 
-      else { board.innerText = `🚨 歷史大魔王：${errors.map(e => `${e[0]}(錯${e[1].wrong}次)`).join('、')}`; }
-    }
-
-    /* =========================================
-       🎮 3. 測驗遊戲邏輯
-       ========================================= */
-    let correctItem = null;
-    let isAnswering = false;
-
-    function nextQuestion() {
-      isAnswering = false;
-      const pool = getCurrentPool();
-      correctItem = getWeightedRandomKana(pool);
-      let options = [correctItem];
-      while(options.length < 4) {
-        let randomWrong = pool[Math.floor(Math.random() * pool.length)];
-        if(!options.includes(randomWrong)) options.push(randomWrong);
-      }
-      options.sort(() => Math.random() - 0.5);
-
-      document.getElementById('quiz-question').innerText = correctItem.r; 
-      const optionsContainer = document.getElementById('quiz-options');
-      optionsContainer.innerHTML = '';
-      
-      options.forEach(opt => {
-        const btn = document.createElement('button');
-        btn.className = 'quiz-btn';
-        const fontSize = opt.k.length > 1 ? '28px' : '40px'; 
-        btn.innerHTML = `<span style="font-size: ${fontSize}">${opt.k}</span>`;
-        btn.onclick = () => handleAnswer(opt.k, btn);
-        optionsContainer.appendChild(btn);
-      });
-    }
-
-    function handleAnswer(selectedKana, btnElement) {
-      if(isAnswering) return; 
-      isAnswering = true;
-      if(!userStats[correctItem.k]) userStats[correctItem.k] = { wrong: 0, correct: 0 };
-      
-      const allBtns = document.querySelectorAll('.quiz-btn');
-      if (selectedKana === correctItem.k) {
-        btnElement.classList.add('correct');
-        userStats[correctItem.k].correct += 1;
-        sessionCorrect += 1; 
-        speakKana(correctItem.k);
-        updateSessionStats(); 
-        setTimeout(nextQuestion, 800);
-      } else {
-        btnElement.classList.add('wrong');
-        userStats[correctItem.k].wrong += 1;
-        sessionWrong += 1; 
-        updateSessionStats(); 
-        allBtns.forEach(b => { if(b.innerText === correctItem.k) b.classList.add('correct'); });
-        setTimeout(nextQuestion, 1500);
-      }
-      saveStats();
-    }
-
-    /* =========================================
-       🖥️ 4. 畫面切換與初始化
-       ========================================= */
-    window.onload = () => {
-      renderGrid();
-      updateStatsBoard();
-      updateSessionStats();
-      initSpeechAPI();
-      initCanvas();
-      renderConfusingSection();
-      renderKansaiEgg();
-    };
-
-    function switchMode(mode) {
-      currentMode = mode;
-      document.getElementById('mode-learn').classList.remove('active');
-      document.getElementById('mode-quiz').classList.remove('active');
-      document.getElementById(`mode-${mode}`).classList.add('active');
-
-      if (mode === 'learn') {
-        document.getElementById('learn-section').style.display = 'block';
-        document.getElementById('quiz-section').style.display = 'none';
-      } else {
-        document.getElementById('learn-section').style.display = 'none';
-        document.getElementById('quiz-section').style.display = 'flex';
-        nextQuestion(); 
-      }
-    }
-
-    function setMainTab(type) {
-      currentMain = type;
-      document.getElementById('btn-hiragana').classList.remove('active');
-      document.getElementById('btn-katakana').classList.remove('active');
-      document.getElementById('btn-' + type).classList.add('active');
-      if(currentMode === 'learn') renderGrid();
-      if(currentMode === 'quiz') nextQuestion();
-    }
-
-    function setSubTab(type) {
-      currentSub = type;
-      document.getElementById('btn-seion').classList.remove('active');
-      document.getElementById('btn-dakuon').classList.remove('active');
-      document.getElementById('btn-yoon').classList.remove('active');
-      document.getElementById('btn-' + type).classList.add('active');
-      if(currentMode === 'learn') renderGrid();
-      if(currentMode === 'quiz') nextQuestion();
-    }
-
-    function renderGrid() {
-      const grid = document.getElementById('kana-grid');
-      grid.innerHTML = '';
-      database[currentMain][currentSub].forEach(item => {
-        const div = document.createElement('div');
-        if (!item) { div.className = 'kana-card empty'; } 
-        else {
-          div.className = 'kana-card';
-          const yoonClass = item.k.length > 1 ? 'yoon-text' : '';
-          div.innerHTML = `<div class="kana-char ${yoonClass}">${item.k}</div><div class="kana-romaji">${item.r}</div>`;
-          div.onclick = () => openModal(item.k, item.r);
-        }
-        grid.appendChild(div);
-      });
-    }
-
-    function renderConfusingSection() {
-      const container = document.getElementById('confusing-content');
-      container.innerHTML = '';
-      confusingData.forEach(item => {
-        const div = document.createElement('div');
-        div.className = 'confuse-pair';
-        div.innerHTML = `<div class="pair-chars">${item.pair}</div><div class="pair-desc">${item.desc}<br><span class="mnemonic">💡 口訣：${item.mnemonic}</span></div>`;
-        container.appendChild(div);
-      });
-    }
-
-    function renderKansaiEgg() {
-      document.getElementById('kansai-egg').innerText = kansaiPhrases[Math.floor(Math.random() * kansaiPhrases.length)];
-    }
-
-    /* =========================================
-       🗣️ 5. 語音與畫布相關
-       ========================================= */
-    function initSpeechAPI() { if ('speechSynthesis' in window) window.speechSynthesis.getVoices(); }
-    function speakKana(text) {
-      if (!('speechSynthesis' in window)) return;
-      window.speechSynthesis.cancel(); 
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = 'ja-JP'; utterance.rate = 0.8;     
-      window.speechSynthesis.speak(utterance);
-    }
-    function speakCurrentKana() { speakKana(currentKana); }
-
-    function openModal(kana, romaji) {
-      currentKana = kana;
-      document.getElementById('modal-kana-title').innerText = kana;
-      document.getElementById('modal-romaji').innerText = `【 ${romaji} 】`;
-      const traceChar = document.getElementById('trace-char');
-      traceChar.style.display = 'block'; 
-      document.getElementById('stroke-animation-container').innerHTML = '';
-      traceChar.innerText = kana; traceChar.style.fontSize = kana.length > 1 ? '110px' : '180px';
-      document.getElementById('kana-modal').classList.add('show');
-      clearCanvas(); speakKana(kana);
-    }
-    function closeModal() { document.getElementById('kana-modal').classList.remove('show'); document.getElementById('stroke-animation-container').innerHTML = ''; }
-    window.onclick = function(event) { if (event.target === document.getElementById('kana-modal')) closeModal(); }
-
-    /* =========================================
-       🚀 6. CDN 光速筆順動畫 (解決手機網路不穩問題)
-       ========================================= */
-    async function playStrokeAnimation() {
-      const container = document.getElementById('stroke-animation-container');
-      const traceChar = document.getElementById('trace-char');
-      traceChar.style.display = 'none'; 
-      clearCanvas(); 
-
-      // 換用全球最快的 jsDelivr CDN，解決手機抓不到 GitHub 原始檔的問題
-      container.innerHTML = '<div style="color:#aaa; font-size:14px;">筆順載入中...</div>';
-      try {
-        container.innerHTML = '';
-        for(let i = 0; i < currentKana.length; i++) {
-          const char = currentKana.charAt(i);
-          const unicode = char.charCodeAt(0).toString(16).padStart(5, '0');
-          const url = `https://cdn.jsdelivr.net/gh/KanjiVG/kanjivg@master/kanji/${unicode}.svg`;
-          const response = await fetch(url);
-          if(response.ok) {
-            const wrapper = document.createElement('div'); wrapper.innerHTML = await response.text();
-            const svg = wrapper.querySelector('svg');
-            if(svg) {
-              svg.style.width = currentKana.length > 1 ? '110px' : '200px';
-              svg.style.height = currentKana.length > 1 ? '110px' : '200px';
-              container.appendChild(svg);
-            }
-          } else {
-             throw new Error("找不到檔案");
-          }
-        }
-        let delay = 0;
-        container.querySelectorAll('path').forEach(path => {
-          const length = path.getTotalLength();
-          path.style.strokeDasharray = length; path.style.strokeDashoffset = length;
-          path.style.animation = `drawPath 0.6s ease forwards ${delay}s`; delay += 0.6; 
+    <script>
+        // --- 初始化 GSAP ---
+        gsap.registerPlugin(ScrollTrigger);
+        
+        // 滾動進度條
+        window.addEventListener('scroll', () => {
+            let winScroll = document.documentElement.scrollTop;
+            let height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            let scrolled = (winScroll / height) * 100;
+            document.getElementById("progress-bar").style.width = scrolled + "%";
         });
-      } catch (e) { 
-        container.innerHTML = '<div style="color:red; font-size:14px;">網路不穩或無此字元動畫 😢</div>'; 
-        setTimeout(() => { traceChar.style.display = 'block'; container.innerHTML = ''; }, 2500); 
-      }
-    }
 
-    let canvas, ctx, isDrawing = false;
-    function initCanvas() {
-      canvas = document.getElementById('drawing-canvas'); if (!canvas) return;
-      ctx = canvas.getContext('2d'); ctx.strokeStyle = '#4A4A4A'; ctx.lineWidth = 12; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
-      canvas.addEventListener('mousedown', startDrawing); canvas.addEventListener('mousemove', draw); canvas.addEventListener('mouseup', stopDrawing); canvas.addEventListener('mouseout', stopDrawing);
-      canvas.addEventListener('touchstart', startDrawing, { passive: false }); canvas.addEventListener('touchmove', draw, { passive: false }); canvas.addEventListener('touchend', stopDrawing);
-    }
-    function getCoordinates(e) {
-      const rect = canvas.getBoundingClientRect(); const clientX = e.touches ? e.touches[0].clientX : e.clientX; const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-      return { x: clientX - rect.left, y: clientY - rect.top };
-    }
-    function startDrawing(e) {
-      if(e.type === 'touchstart') e.preventDefault(); isDrawing = true; const pos = getCoordinates(e); ctx.beginPath(); ctx.moveTo(pos.x, pos.y);
-      document.getElementById('stroke-animation-container').innerHTML = ''; document.getElementById('trace-char').style.display = 'block';
-    }
-    function draw(e) { if (!isDrawing) return; if(e.type === 'touchmove') e.preventDefault(); const pos = getCoordinates(e); ctx.lineTo(pos.x, pos.y); ctx.stroke(); }
-    function stopDrawing() { if (!isDrawing) return; isDrawing = false; ctx.closePath(); }
-    function clearCanvas() { if(ctx) ctx.clearRect(0, 0, canvas.width, canvas.height); }
-  </script>
+        // --- 手機版選單邏輯 ---
+        const menuToggle = document.getElementById('menu-toggle');
+        const mobileMenu = document.getElementById('mobile-menu');
+        let isMenuOpen = false;
+
+        menuToggle.addEventListener('click', () => {
+            isMenuOpen = !isMenuOpen;
+            gsap.to(mobileMenu, { x: isMenuOpen ? 0 : '100%', duration: 0.5, ease: "power3.out" });
+            menuToggle.innerHTML = isMenuOpen ? '<iconify-icon icon="heroicons:x-mark"></iconify-icon>' : '<iconify-icon icon="heroicons:bars-3-bottom-right"></iconify-icon>';
+        });
+
+        document.querySelectorAll('.mobile-link').forEach(link => {
+            link.addEventListener('click', () => {
+                isMenuOpen = false;
+                gsap.to(mobileMenu, { x: '100%' });
+                menuToggle.innerHTML = '<iconify-icon icon="heroicons:bars-3-bottom-right"></iconify-icon>';
+            });
+        });
+
+        // --- 性能優化後的自定義游標 ---
+        const cursor = document.getElementById('custom-cursor');
+        if (window.matchMedia("(pointer: fine)").matches) {
+            const xSetter = gsap.quickSetter(cursor, "x", "px");
+            const ySetter = gsap.quickSetter(cursor, "y", "px");
+
+            window.addEventListener('mousemove', e => {
+                xSetter(e.clientX - 10);
+                ySetter(e.clientY - 10);
+            });
+
+            document.querySelectorAll('button, a').forEach(el => {
+                el.addEventListener('mouseenter', () => gsap.to(cursor, { scale: 3, background: 'rgba(255,255,255,0.2)' }));
+                el.addEventListener('mouseleave', () => gsap.to(cursor, { scale: 1, background: 'rgba(45, 212, 191, 0.5)' }));
+            });
+        }
+
+        // --- Three.js 粒子星雲 (優化版) ---
+        let particlesMesh;
+        const setupScene = () => {
+            const container = document.getElementById('canvas-container');
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            container.appendChild(renderer.domElement);
+
+            const particlesGeometry = new THREE.BufferGeometry();
+            const count = window.innerWidth < 768 ? 2000 : 5000;
+            const posArray = new Float32Array(count * 3);
+            for(let i=0; i < count * 3; i++) {
+                posArray[i] = (Math.random() - 0.5) * 10;
+            }
+            particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+
+            const material = new THREE.PointsMaterial({
+                size: 0.005,
+                color: 0x2DD4BF,
+                transparent: true,
+                blending: THREE.AdditiveBlending
+            });
+
+            particlesMesh = new THREE.Points(particlesGeometry, material);
+            scene.add(particlesMesh);
+            camera.position.z = 3;
+
+            let mouseX = 0, mouseY = 0;
+            document.addEventListener('mousemove', (e) => {
+                mouseX = (e.clientX - window.innerWidth / 2) * 0.0003;
+                mouseY = (e.clientY - window.innerHeight / 2) * 0.0003;
+            });
+
+            const animate = () => {
+                requestAnimationFrame(animate);
+                particlesMesh.rotation.y += 0.001;
+                particlesMesh.rotation.x += (mouseY - particlesMesh.rotation.x) * 0.05;
+                particlesMesh.rotation.y += (mouseX - particlesMesh.rotation.y) * 0.05;
+                renderer.render(scene, camera);
+            };
+            animate();
+
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+
+            // 滾動連動
+            window.addEventListener('scroll', () => {
+                const scrollPercent = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight);
+                particlesMesh.position.z = scrollPercent * 2.5;
+            });
+        };
+        setupScene();
+
+        // --- 進場動畫 ---
+        const tl = gsap.timeline();
+        tl.to(".hero-sub", { y: 0, duration: 1, ease: "power4.out" })
+          .to(".hero-title", { y: 0, duration: 1.2, stagger: 0.2, ease: "power4.out" }, "-=0.6")
+          .to(".hero-desc", { opacity: 1, y: -10, duration: 1 }, "-=0.8")
+          .to(".hero-cta", { opacity: 1, y: -10, duration: 1 }, "-=0.8");
+
+        // 滾動視差與出現動畫
+        gsap.utils.toArray('section').forEach(section => {
+            gsap.from(section, {
+                scrollTrigger: {
+                    trigger: section,
+                    start: "top 85%",
+                    toggleActions: "play none none none"
+                },
+                opacity: 0,
+                y: 50,
+                duration: 1,
+                ease: "power2.out"
+            });
+        });
+    </script>
 </body>
 </html>
